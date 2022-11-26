@@ -6,6 +6,7 @@ const {
   ReturnDocument,
   ObjectId,
 } = require("mongodb");
+const { query } = require("express");
 const port = process.env.PORT || 5000;
 
 require("dotenv").config();
@@ -54,6 +55,19 @@ async function run() {
       const query = {};
       const result = await usersCollection.find(query).toArray();
       res.send(result);
+    });
+
+    app.get("/users/buyer/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isBuyer: user?.userRole === "buyer" });
+    });
+    app.get("/users/seller/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isSeller: user?.userRole === "seller" });
     });
   } finally {
   }
