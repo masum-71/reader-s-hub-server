@@ -45,6 +45,24 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/categories", async (req, res) => {
+      const product = req.body;
+      const category = req.body.category;
+      const query = { category: category };
+      const options = { upsert: true, new: true };
+      const updateDoc = {
+        $push: {
+          products: product,
+        },
+      };
+      const result = await categoriesCollection.updateOne(
+        query,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
