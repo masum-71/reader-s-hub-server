@@ -63,6 +63,28 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/products", async (req, res) => {
+      const email = req.query.email;
+
+      const query = { products: { $elemMatch: { email } } };
+      const result = await categoriesCollection.find(query).toArray();
+
+      const products = [];
+      result.forEach((category) => {
+        const product = category.products.filter(
+          (product) => product.email === email
+        );
+        products.push(...product);
+      });
+
+      // const products = result.map((category) =>
+      //   category.products.filter((product) => product.email === email)
+      // );
+
+      console.log(products);
+      res.send(products);
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
