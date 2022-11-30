@@ -31,6 +31,7 @@ async function run() {
       .collection("categories");
 
     const usersCollection = client.db("readershub").collection("users");
+    const bookingsCollection = client.db("readershub").collection("bookings");
 
     app.get("/categories", async (req, res) => {
       const query = {};
@@ -81,7 +82,6 @@ async function run() {
       //   category.products.filter((product) => product.email === email)
       // );
 
-      console.log(products);
       res.send(products);
     });
 
@@ -94,6 +94,13 @@ async function run() {
     app.get("/users", async (req, res) => {
       const query = {};
       const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query);
       res.send(result);
     });
 
@@ -114,6 +121,12 @@ async function run() {
       const query = { email };
       const user = await usersCollection.findOne(query);
       res.send({ isAdmin: user?.userRole === "admin" });
+    });
+
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
     });
   } finally {
   }
