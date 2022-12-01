@@ -32,6 +32,7 @@ async function run() {
 
     const usersCollection = client.db("readershub").collection("users");
     const bookingsCollection = client.db("readershub").collection("bookings");
+    const reportCollection = client.db("readershub").collection("reports");
 
     app.get("/categories", async (req, res) => {
       const query = {};
@@ -141,6 +142,26 @@ async function run() {
       const email = req.params.email;
       const query = { email: email };
       const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/report", async (req, res) => {
+      const report = req.body;
+      const result = await reportCollection.insertOne(report);
+      res.send(result);
+    });
+
+    app.get("/report", async (req, res) => {
+      const query = {};
+      const result = await reportCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.delete("/report/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: ObjectId(id) };
+      const result = await reportCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
